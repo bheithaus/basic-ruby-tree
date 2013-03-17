@@ -1,6 +1,3 @@
-
-require 'set'
-
 class TreeNode
 	attr_accessor :parent
 	attr_reader :value, :children
@@ -32,12 +29,6 @@ class TreeNode
 		end
 	end
 
-	def bf_print
-
-
-	end
-
-
 	def bfs(value, &block)
 		search_queue = []
 		search_queue << self
@@ -52,22 +43,23 @@ class TreeNode
 		end
 	end
 
-	def more_nodes?
-		print_queue[print_queue.keys.sort.last].last.children.length > 0
-
-
-
+	def deepest_level(queue)
+		queue.keys.sort.last
 	end
 
-	def print_tree  ## major issue..it stops looping when it hits any branch that has no children
-		#not necessarily the last!
+	def more_nodes?(print_queue)
+		more_nodes = false
+		print_queue[ deepest_level( print_queue ) ].each do |node_at_bottom| 
+			more_nodes = true unless node_at_bottom.children.empty?
+		end
+		more_nodes
+	end
+
+	def print_tree
 		# { tree_level => [nodes] }
 		print_queue = Hash.new { |hash, key| hash[key] = [] }
-		
 		tree_level = 1
-
 		print_queue[1] << self
-
 		while more_nodes?(print_queue)
 			print_queue[print_queue.keys.sort.last].each do |node|
 				node.children.each do |child|
@@ -84,60 +76,8 @@ class TreeNode
 		end
 	end
 end
-class Knight
 
-	MOVES = [[2,1],
-			 [1,2],
-			 [2,-1],
-			 [1,-2],
-			 [-1,-2],
-			 [-2,-1],
-			 [-1,2],
-			 [-2,1]]
-
-	def move_tree(root_node)
-		used_moves = Set.new
-		newest_nodes = [root_node]
-
-		8.times do |index|
-			next_newest_nodes = []
-
-			newest_nodes.each do |node|
-
-				start = node.value
-				MOVES.each do |move|
-					new_move = [ move[0] + start[0], move[1] + start[1] ]  #x,y
-					if !used_moves.include?( new_move ) && in_bounds?( new_move )
-						used_moves.add( new_move )
-						new_node = TreeNode.new(new_move) 
-						node.add_child( new_node )
-						next_newest_nodes << new_node
-					end
-				end
-			end
-			newest_nodes = next_newest_nodes
-		end
-		[ root_node , used_moves ] 
-	end
-
-
-
-
-	def in_bounds?(move)
-		( move[0] <= 8 && move[0] >= 1 ) && ( move[1] <= 8 && move[1] >= 1 )
-	end
-
-end
-
-def p
-	root = TreeNode.new( [5,4] )
-	root , used_moves = root.move_tree( root )
-	root.print_tree
-	print "you found : #{used_moves.length} moves"
-	root
-end
-
-
+##test build a tree
 def m
 
 	root = TreeNode.new(1)
